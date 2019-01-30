@@ -1,0 +1,73 @@
+============= AUTO =============
+vivado -source base_VC707.tcl
+
+============= MANUAL =============
+#### Vivado HLS ####
+- New Project (VC707 Evaluation Board)
+
+- Simulation
+- Synthesis (set top function; set target time 5 (5ns == 200Mhz)
+- Cosimulation
+- Solution -> Export RTL
+
+
+#### Vivado ####
+(FIRST TIME: install cable_drivers in Xilinx directory launching install_drivers.exe as Admin)
+- New Project
+- [...]
+
+- Create Block Design
+
+- Import Cores:
+-- IP settting
+-- Repository Management
+-- Add Cores (if no IPs Interfaces => Export RTL in HLS)
+
+===========================
+
+[Board VC707 (200MHz)]
+-- MIG 7 (execute first Auto -> double click -> Next... -> Memory Option -> remove Generate Additional Clock)
+-- Microblaze (check clock 200MHz)
+-- DMA (Disable Scatter Gather Engine / Buffer Length 23 / Select data width (eg. 128) / Mux Burst Size 256 /  Allow Unaligned Transfer)
+-- Core
+-- AXI Timer (Enable 64 bit)
+-- {mdm_1 (ENABLE JTAG UART)}
+-- {Microblaze (Maximum Performances)}
+
+===========================
+
+- Validate Design
+
+- Sources
+- Design (dx click)
+- create HDL Wrapper [needed to create drivers interfaces]
+
+- Generate Bitstream (or Design Runs -> dx click -> Launch Runs... -> Number of jobs (core): 8)
+
+- File
+- Export
+- Hardware
+- Include Bitstream
+
+- File
+- Launch SDK
+
+
+#### SDK ####
+- [You can delete the entire "sdk directory" if you want to delete previous attemps]
+- File -> New Application Proj -> (check correct .hdf (if it is to import select Target HW -> New -> Browse..)) -> Next (Helloworld App)
+
+- App -> Src -> Iscript -> (augment Heap and Stack (eg. 0xffffff))
+
+- Connect Board
+
+- Program FPGA -> Program
+
+- Run Configurations..  -> Xilinx Application (GDB)
+--- Target Setup (Bitstream file: [select] / Initialization file: [select] / Reset Processor: select (!!! NO ENTIRE SYSTEM !!!) / Program FPGA: activate / Run ps7_init: activate / Run ps7_post_config: activate)
+--- Application (select application and Proj name)
+--- STDIO Connection (Connect STDIO to console -> Serial port (eg. COM5 115200))
+--------- if console doesn't work on Linux: sudo screen /dev/ttyUSB2 115200 (to print into terminal the output of selected port eg. ttyUSB2)
+
+- Run
+
